@@ -71,7 +71,7 @@ module's own code. Both are still pinned in the manifest's
 standard PowerShell verb (`PSHG-TestScriptSyntax`, not `Test-PSHGScriptSyntax`). This
 intentionally trades PowerShell's "approved verb" convention (`Import-Module` will warn about
 it - harmless, just a warning) for a short, consistent, collision-resistant prefix across
-sixteen functions whose natural verbs (`Test-`, `Find-`, `Invoke-`, `Format-`) would otherwise
+seventeen functions whose natural verbs (`Test-`, `Find-`, `Invoke-`, `Format-`) would otherwise
 be generic enough to collide with other modules.
 
 ## Quick start
@@ -90,7 +90,7 @@ PSHG-InvokeSilentFailureSweep -Path C:\MyProject
 
 ## Detect-only vs. auto-fix
 
-Three of the sixteen functions actually **change** the file they flag; everything else only
+Three of the seventeen functions actually **change** the file they flag; everything else only
 ever reports - it is always a human decision (fix the code, or justify why it's fine) that
 determines what happens next, never the tool itself.
 
@@ -108,6 +108,7 @@ determines what happens next, never the tool itself.
 | `PSHG-TestJoinPathDriveRoot` | Reports only. Every hit is a bug unless the line carries `# PSHG-OK: JoinPathDriveRoot`. |
 | `PSHG-TestTypographicQuoteEscape` | Reports only. No baseline and no marker: every site is listed on every run. |
 | `PSHG-TestUnescapedLiteral` | Reports only. A lead finder, not a verdict: no baseline and no marker, every site is listed on every run. |
+| `PSHG-TestLivePinLiteral` | Reports only. Baseline-gated (`-BaselinePath`, `-UpdateBaseline` records current sites as accepted); a new site exits 1. |
 | `PSHG-TestModuleVersionSelfReference` | Reports only. |
 | `PSHG-TestScriptErrorHandling` | Reports only. |
 | `PSHG-InvokeSilentFailureSweep` | Reports only. |
@@ -265,6 +266,7 @@ PSHG-TestScriptErrorHandling -Path .\Test-Example.ps1 -KnownSignalFunction 'Writ
 | `PSHG-TestJoinPathDriveRoot` ([guide](Docs/PSHG-TestJoinPathDriveRoot.md)) | `Join-Path` on a drive root built from a variable (`'{0}:\' -f $Letter`, `"${Letter}:\..."`). `Join-Path` throws "Cannot find drive" when that drive is not mounted - the case for a USB drive plugged in after the session started or an unmounted VHD. Use `[System.IO.Path]::Combine`. |
 | `PSHG-TestTypographicQuoteEscape` ([guide](Docs/PSHG-TestTypographicQuoteEscape.md)) | Hand-rolled quote escaping that handles only the ASCII quote (`-replace "'", "''"`, `.Replace("'", "''")`, `[regex]::Replace(...)`, and the double-quote forms). PowerShell also reads U+2018-U+201B and U+201C-U+201E as quotes, so a value containing one still ends the literal early. Lists every site on every run (no baseline); exit 1 on any. |
 | `PSHG-TestUnescapedLiteral` ([guide](Docs/PSHG-TestUnescapedLiteral.md)) | A value put between single quotes in a `-f` format string (`"Set-Thing -Path '{0}'" -f $Path`, `"@{{ Path = '{0}' }}" -f $Path`, `[string]::Format`) with no escaping at all, so even an ASCII apostrophe in the value ends the literal early in the generated command or data file. Safe forms are skipped (`Format-EscapedLiteral`, constants, typed numbers/guids/dates, `ValidateSet`, variables whose assignment is verified). A lead list to review, not a verdict: lists every site on every run (no baseline); exit 1 on any. |
+| `PSHG-TestLivePinLiteral` ([guide](Docs/PSHG-TestLivePinLiteral.md)) | For codebases that publish each module's live version in `<Module>\LiveVersion.psd1`: a literal `Import-Module X -RequiredVersion 1.2` or `Open-MyElevatedSession -ModuleName X -ModuleVersion 1.2` (also inside a string built for a child process) on a module that has such a file, which goes stale at the next branch. Skips frozen (non-newest) version folders and a module's own self-references unless asked. Baseline-gated; exit 1 on a new site. |
 | `PSHG-TestModuleVersionSelfReference` | A module's own files still pointing at an OLDER version of itself after a branch. |
 | `PSHG-TestScriptErrorHandling` | The silent-failure antipatterns, reported as AP1-AP12 (empty catch, swallowed `$LASTEXITCODE`, null-unsafe conditionals, and more - see its own `Get-Help -Full`). |
 | `PSHG-InvokeSilentFailureSweep` | Bulk-audit driver for `PSHG-TestScriptErrorHandling` across a whole tree, with a per-rule summary. If the background scan reports errors and finds nothing it exits 2, never a false clean. |

@@ -24,6 +24,7 @@
 		'PSHG-TestJoinPathDriveRoot'
 		'PSHG-TestTypographicQuoteEscape'
 		'PSHG-TestUnescapedLiteral'
+		'PSHG-TestLivePinLiteral'
 	)
 	CmdletsToExport   = @()
 	VariablesToExport = @()

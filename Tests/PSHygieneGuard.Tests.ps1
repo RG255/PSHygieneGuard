@@ -29,9 +29,10 @@ AfterAll {
 }
 
 Describe 'Module manifest' {
-	It 'exports exactly the 16 documented functions' {
+	It 'exports exactly the 17 documented functions' {
 		$Exported = (Get-Command -Module PSHygieneGuard).Name
-		$Exported.Count | Should -Be 16
+		$Exported.Count | Should -Be 17
+		$Exported | Should -Contain 'PSHG-TestLivePinLiteral'
 		$Exported | Should -Contain 'PSHG-TestTypographicQuoteEscape'
 		$Exported | Should -Contain 'PSHG-TestUnescapedLiteral'
 		$Exported | Should -Contain 'PSHG-TestJoinPathDriveRoot'

@@ -1222,7 +1222,7 @@
 				{ $Merged[$F.Key] = 'TODO: triaged {0} - state WHY this is not a defect.' -f (Get-Date -Format 'yyyy-MM-dd') }
 			}
 			foreach ($K in ($Merged.Keys | Sort-Object))
-			{ [void]$Out.Add(("    '{0}' = '{1}'" -f ($K -replace "'", "''"), ($Merged[$K] -replace "'", "''"))) }
+			{ [void]$Out.Add(("    '{0}' = '{1}'" -f [regex]::Replace($K, "['\u2018-\u201B]", '$0$0'), [regex]::Replace([string]$Merged[$K], "['\u2018-\u201B]", '$0$0'))) }
 			[void]$Out.Add('}')
 
 			# SELF-VALIDATE before committing - this baseline is safety-relevant (it gates what a

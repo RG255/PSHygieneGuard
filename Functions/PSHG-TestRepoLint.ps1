@@ -262,7 +262,7 @@
 		$Out.Add('@{')
 		$Out.Add('    Accepted = @(')
 		ForEach ($K in $FinalKeys)
-		{ $Out.Add(("        '{0}'" -f ($K -replace "'", "''"))) }
+		{ $Out.Add(("        '{0}'" -f [regex]::Replace($K, "['\u2018-\u201B]", '$0$0'))) }
 		$Out.Add('    )')
 		$Out.Add('}')
 		$Utf8Bom = New-Object System.Text.UTF8Encoding($true)

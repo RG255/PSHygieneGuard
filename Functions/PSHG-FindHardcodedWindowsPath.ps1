@@ -337,7 +337,7 @@
 
 			$Private:_afterTargetSegments = $Private:_afterDrive[$Targets[$Private:_matchName].Count..($Private:_afterDrive.Count - 1)]
 			If ($Private:_afterDrive.Count -eq $Targets[$Private:_matchName].Count) { $Private:_afterTargetSegments = @() }
-			$Private:_suffix = ($Private:_afterTargetSegments -join '\') -replace "'", "''"
+			$Private:_suffix = [regex]::Replace(($Private:_afterTargetSegments -join '\'), "['\u2018-\u201B]", '$0$0')
 
 			$Private:_fileRows += [PSCustomObject]@{
 				Pattern     = $Private:_matchName
