@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1 (2026-11-26 update, no version bump)
+
+- Added `LiveVersion.psd1` (states the live version of the module; read only when no copy sits beside the version folders).
+
 ## 0.1 (2026-11-22 update, no version bump)
 
 - New function `PSHG-TestLivePinLiteral` (17th export, additive: no existing function changed): AST check for a literal version pin on a module that publishes its live version in `<ModulesRoot>\<Module>\LiveVersion.psd1` - `Import-Module X -RequiredVersion <literal>`, `Open-MyElevatedSession -ModuleName X -ModuleVersion <literal>`, and the same `Import-Module` text inside a string built for a child process (kind `InString`). Skips frozen version folders (not the newest of their module) and a module's own self-references unless `-IncludeFrozen` / `-IncludeSelf`. Baseline-gated (`-BaselinePath`, `-UpdateBaseline`, `-All`; keys `LivePinLiteral|<relative path>|<Module>|<Kind>`, never a line number). Exit 0 no new site / 1 new site / 2 could not run reliably (no modules root, unreadable baseline, files not checked). `-Quiet`, `-Csv`, `-PassThru`, pipeline input. Guide: `Docs\PSHG-TestLivePinLiteral.md`.
